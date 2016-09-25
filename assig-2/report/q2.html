@@ -1,0 +1,315 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>EE 779 : Assignment 2 | Q-2</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-09-26"><meta name="DC.source" content="q2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>EE 779 : Assignment 2 | Q-2</h1><!--introduction--><p>Meet Pragnesh Shah, 13D070003</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">(a): Periodogram with K = 0.01</a></li><li><a href="#3">b)i) AR modelling using autocorrelation method</a></li><li><a href="#5">b)ii) AR modelling using autocorrelation method</a></li><li><a href="#7">b)iii) MUSIC method</a></li><li><a href="#9">b)iv) Min-norm method</a></li><li><a href="#11">Comparison of PSD estimate plots</a></li><li><a href="#13">Comparison Study and Analysis</a></li></ul></div><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+
+<span class="comment">% Read input data and converting to complex signals</span>
+I01 = getdata(<span class="string">'../data/I01.DAT'</span>)';
+I10 = getdata(<span class="string">'../data/I10.DAT'</span>)';
+I40 = getdata(<span class="string">'../data/I40.DAT'</span>)';
+R01 = getdata(<span class="string">'../data/R01.DAT'</span>)';
+R10 = getdata(<span class="string">'../data/R10.DAT'</span>)';
+R40 = getdata(<span class="string">'../data/R40.DAT'</span>)';
+
+x01 = R01 + I01*1i;
+x10 = R10 + I10*1i;
+x40 = R40 + I40*1i;
+
+input_data = [x01,x10,x40];
+noise_vals_k = [0.01,0.10,0.40];
+</pre><h2>(a): Periodogram with K = 0.01<a name="2"></a></h2><pre class="codeinput">fft_len = 1024;
+N = length(x01);
+
+<span class="comment">% Zero padding signal</span>
+x_padded = zeros(fft_len,1);
+x_padded(1:N) = x01(1:N);
+fft_xN = fftshift(fft(x_padded, fft_len));
+periodogram_psd = (abs(fft_xN).^2)/N;
+
+<span class="comment">% Plotting</span>
+figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+plot(20*log10(periodogram_psd));
+title(<span class="string">'Power spectral estimate: Periodogram'</span>)
+ylabel(<span class="string">'dB'</span>)
+xlabel(<span class="string">'n(1:1024)'</span>)
+xlim([0 1024])
+</pre><img vspace="5" hspace="5" src="q2_01.png" alt=""> <h2>b)i) AR modelling using autocorrelation method<a name="3"></a></h2><p>Calculate N1 and N2 and the y and Y matrices. For the Autocorrelation method: N1=1, N2 = N+p Compute the optimal value of the AR coefficients</p><pre class="codeinput"><span class="keyword">for</span> k = 1:length(noise_vals_k)
+    x = input_data(:,k);
+    AR_autocorr_psd = AR_autocorrelation_spectrum(x,7,noise_vals_k(k));
+    figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(20*log10(AR_autocorr_psd));
+    title([<span class="string">'Power spectral estimate: AR autocorrelation method'</span>,num2str(noise_vals_k(k))])
+    ylabel(<span class="string">'dB'</span>)
+    xlabel(<span class="string">'n(1:1024)'</span>)
+    xlim([0 1024])
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="q2_02.png" alt=""> <img vspace="5" hspace="5" src="q2_03.png" alt=""> <img vspace="5" hspace="5" src="q2_04.png" alt=""> <h2>b)ii) AR modelling using autocorrelation method<a name="5"></a></h2><p>Calculate N1 and N2 and the y and Y matrices. For the Autocorrelation method: N1=p+1, N2 = N Compute the optimal value of the AR coefficients</p><pre class="codeinput"><span class="keyword">for</span> k = 1:length(noise_vals_k)
+    x = input_data(:,k);
+    AR_covar_psd = AR_covariance_spectrum(x,7,noise_vals_k(k));
+    figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(20*log10(AR_covar_psd));
+    title([<span class="string">'Power spectral estimate: AR covariance method'</span>,num2str(noise_vals_k(k))])
+    ylabel(<span class="string">'dB'</span>)
+    xlabel(<span class="string">'n(1:1024)'</span>)
+    xlim([0 1024])
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="q2_05.png" alt=""> <img vspace="5" hspace="5" src="q2_06.png" alt=""> <img vspace="5" hspace="5" src="q2_07.png" alt=""> <h2>b)iii) MUSIC method<a name="7"></a></h2><p>Compute 8x8 autocorrelation matrix for this method using covariance method. Compute Eigenvectors of the 8x8 Matrix Since noise space = 5. we extract smalled 5 eigenvecs Obtain the noise subpsace and compute pseudo-specturm</p><pre class="codeinput"><span class="keyword">for</span> k = 1:length(noise_vals_k)
+    x = input_data(:,k);
+    MUSIC_psd = MUSIC_spectrum(x,7,3,noise_vals_k(k));
+    figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(20*log10(MUSIC_psd));
+    title([<span class="string">'Power spectral estimate: MUSIC method '</span>,num2str(noise_vals_k(k))])
+    ylabel(<span class="string">'dB'</span>)
+    xlabel(<span class="string">'n(1:1024)'</span>)
+    xlim([0 1024])
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="q2_08.png" alt=""> <img vspace="5" hspace="5" src="q2_09.png" alt=""> <img vspace="5" hspace="5" src="q2_10.png" alt=""> <h2>b)iv) Min-norm method<a name="9"></a></h2><p>Compute vector u having the min norm Use u to compute the Power spectrum</p><pre class="codeinput"><span class="keyword">for</span> k = 1:length(noise_vals_k)
+    x = input_data(:,k);
+    minimum_norm_psd = minimum_norm_spectrum(x,7,3,noise_vals_k(k));
+    figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(20*log10(minimum_norm_psd));
+    title([<span class="string">'Power spectral estimate: Min-Norm method '</span>,num2str(noise_vals_k(k))])
+    ylabel(<span class="string">'dB'</span>)
+    xlabel(<span class="string">'n(1:1024)'</span>)
+    xlim([0 1024])
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="q2_11.png" alt=""> <img vspace="5" hspace="5" src="q2_12.png" alt=""> <img vspace="5" hspace="5" src="q2_13.png" alt=""> <h2>Comparison of PSD estimate plots<a name="11"></a></h2><pre class="codeinput"><span class="keyword">for</span> k = 1:length(noise_vals_k)
+    x = input_data(:,k);
+
+    prdgrm_psd_norm = normalize_psd(periodogram_psd);
+    AR_autocorr_psd_norm = normalize_psd(AR_autocorrelation_spectrum(x,7,noise_vals_k(k)));
+    AR_covar_psd_norm = normalize_psd(AR_covariance_spectrum(x,7,noise_vals_k(k)));
+    MUSIC_psd_norm = normalize_psd(MUSIC_spectrum(x,7,3,noise_vals_k(k)));
+    min_norm_psd_norm = normalize_psd(minimum_norm_spectrum(x,7,3,noise_vals_k(k)));
+
+    all_plots = 20*log10([prdgrm_psd_norm,AR_autocorr_psd_norm,AR_covar_psd_norm,MUSIC_psd_norm,min_norm_psd_norm]);
+    figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(all_plots);
+    title([<span class="string">'Power spectral estimates x :'</span>,num2str(noise_vals_k(k))]);
+    ylabel(<span class="string">'dB'</span>)
+    xlabel(<span class="string">'n(1:1024)'</span>)
+    xlim([0 1024])
+    legend({<span class="string">'Periodogram'</span>, <span class="string">'AR Autocorrelation'</span>, <span class="string">'AR Covariance'</span>, <span class="string">'MUSIC'</span>, <span class="string">'Min-Norm'</span>}, <span class="string">'Location'</span>, <span class="string">'SouthEast'</span>)
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="q2_14.png" alt=""> <img vspace="5" hspace="5" src="q2_15.png" alt=""> <img vspace="5" hspace="5" src="q2_16.png" alt=""> <h2>Comparison Study and Analysis<a name="13"></a></h2><p>The <b>periodogram</b> has multiple peaks due to the rectangular windowing. However the largest peaks are at expected maximal positions.s</p><p>The <b>AR autocorrelation method</b> shows 2 small non-prominent wideband peaks with no so great accuracy. This is due to order limitations.</p><p>The <b>AR covariance method</b> gives a good spectral estimate with 3 constricted peaks the locations near the correct value and small lobes. There are unsual spikes along the spectrum with lower and non-prominent peak values.</p><p>The <b>MUSIC</b> method also gives 3 narrowband peaks at the same place as the AR Covariance method. One improvement over AR covariance is that other insignificant peaks along the spectrum are eliminated due to averaging over entire noise space.</p><p><b>Min-norm</b> method also gives 3 narrowband peaks at the same place as the AR Covariance method. The optimal min-norm vector calcuated gives highly acuurate peaks but fails to eradicate undesired non-prominent peaks along the spectrum as in MUSIC. However, given the lower computational cost over MUSIC and the extremely less isignificant peak values compared to AR covariance, Min-norm performs very well in spectrum esitmation.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% EE 779 : Assignment 2 | Q-2
+% Meet Pragnesh Shah, 13D070003
+%%
+
+close all;
+clear all;
+
+% Read input data and converting to complex signals
+I01 = getdata('../data/I01.DAT')';
+I10 = getdata('../data/I10.DAT')';
+I40 = getdata('../data/I40.DAT')';
+R01 = getdata('../data/R01.DAT')';
+R10 = getdata('../data/R10.DAT')';
+R40 = getdata('../data/R40.DAT')';
+
+x01 = R01 + I01*1i;
+x10 = R10 + I10*1i;
+x40 = R40 + I40*1i;
+
+input_data = [x01,x10,x40];
+noise_vals_k = [0.01,0.10,0.40];
+
+
+%% (a): Periodogram with K = 0.01
+fft_len = 1024;
+N = length(x01);
+
+% Zero padding signal
+x_padded = zeros(fft_len,1);
+x_padded(1:N) = x01(1:N);
+fft_xN = fftshift(fft(x_padded, fft_len));
+periodogram_psd = (abs(fft_xN).^2)/N;
+
+% Plotting 
+figure('units','normalized','outerposition',[0 0 1 1]);
+plot(20*log10(periodogram_psd));
+title('Power spectral estimate: Periodogram')
+ylabel('dB')
+xlabel('n(1:1024)')
+xlim([0 1024])
+
+%% b)i) AR modelling using autocorrelation method
+% Calculate N1 and N2 and the y and Y matrices.
+% For the Autocorrelation method: N1=1, N2 = N+p
+% Compute the optimal value of the AR coefficients
+%%
+
+for k = 1:length(noise_vals_k)
+    x = input_data(:,k);
+    AR_autocorr_psd = AR_autocorrelation_spectrum(x,7,noise_vals_k(k));
+    figure('units','normalized','outerposition',[0 0 1 1]);
+    plot(20*log10(AR_autocorr_psd));
+    title(['Power spectral estimate: AR autocorrelation method',num2str(noise_vals_k(k))])
+    ylabel('dB')
+    xlabel('n(1:1024)')
+    xlim([0 1024])
+end
+
+%% b)ii) AR modelling using autocorrelation method
+% Calculate N1 and N2 and the y and Y matrices.
+% For the Autocorrelation method: N1=p+1, N2 = N
+% Compute the optimal value of the AR coefficients
+%%
+
+for k = 1:length(noise_vals_k)
+    x = input_data(:,k);
+    AR_covar_psd = AR_covariance_spectrum(x,7,noise_vals_k(k));
+    figure('units','normalized','outerposition',[0 0 1 1]);
+    plot(20*log10(AR_covar_psd));
+    title(['Power spectral estimate: AR covariance method',num2str(noise_vals_k(k))])
+    ylabel('dB')
+    xlabel('n(1:1024)')
+    xlim([0 1024])
+end
+
+%% b)iii) MUSIC method
+% Compute 8x8 autocorrelation matrix for this method using covariance method.
+% Compute Eigenvectors of the 8x8 Matrix
+% Since noise space = 5. we extract smalled 5 eigenvecs
+% Obtain the noise subpsace and compute pseudo-specturm
+%%
+
+for k = 1:length(noise_vals_k)
+    x = input_data(:,k);
+    MUSIC_psd = MUSIC_spectrum(x,7,3,noise_vals_k(k));
+    figure('units','normalized','outerposition',[0 0 1 1]);
+    plot(20*log10(MUSIC_psd));
+    title(['Power spectral estimate: MUSIC method ',num2str(noise_vals_k(k))])
+    ylabel('dB')
+    xlabel('n(1:1024)')
+    xlim([0 1024])
+end
+
+%% b)iv) Min-norm method
+% Compute vector u having the min norm 
+% Use u to compute the Power spectrum 
+%%
+
+for k = 1:length(noise_vals_k)
+    x = input_data(:,k);
+    minimum_norm_psd = minimum_norm_spectrum(x,7,3,noise_vals_k(k));
+    figure('units','normalized','outerposition',[0 0 1 1]);
+    plot(20*log10(minimum_norm_psd));
+    title(['Power spectral estimate: Min-Norm method ',num2str(noise_vals_k(k))])
+    ylabel('dB')
+    xlabel('n(1:1024)')
+    xlim([0 1024])
+end
+
+%% Comparison of PSD estimate plots
+
+for k = 1:length(noise_vals_k)
+    x = input_data(:,k);
+
+    prdgrm_psd_norm = normalize_psd(periodogram_psd);
+    AR_autocorr_psd_norm = normalize_psd(AR_autocorrelation_spectrum(x,7,noise_vals_k(k)));
+    AR_covar_psd_norm = normalize_psd(AR_covariance_spectrum(x,7,noise_vals_k(k)));
+    MUSIC_psd_norm = normalize_psd(MUSIC_spectrum(x,7,3,noise_vals_k(k)));
+    min_norm_psd_norm = normalize_psd(minimum_norm_spectrum(x,7,3,noise_vals_k(k)));
+
+    all_plots = 20*log10([prdgrm_psd_norm,AR_autocorr_psd_norm,AR_covar_psd_norm,MUSIC_psd_norm,min_norm_psd_norm]);
+    figure('units','normalized','outerposition',[0 0 1 1]);
+    plot(all_plots);
+    title(['Power spectral estimates x :',num2str(noise_vals_k(k))]);
+    ylabel('dB')
+    xlabel('n(1:1024)')
+    xlim([0 1024])
+    legend({'Periodogram', 'AR Autocorrelation', 'AR Covariance', 'MUSIC', 'Min-Norm'}, 'Location', 'SouthEast')
+end
+%%
+%% Comparison Study and Analysis
+% 
+% The *periodogram* has multiple peaks due to the rectangular windowing. However
+% the largest peaks are at expected maximal positions.s
+%%
+% The *AR autocorrelation method* shows 2 small non-prominent wideband
+% peaks with no so great accuracy. This is due to order limitations.
+%%
+% The *AR covariance method* gives a good spectral estimate with 3 constricted
+% peaks the locations near the correct value and small lobes. There are unsual spikes 
+% along the spectrum with lower and non-prominent peak values.
+%%
+% The *MUSIC* method also gives 3 narrowband peaks at the same place as the
+% AR Covariance method. One improvement over AR covariance is that other insignificant
+% peaks along the spectrum are eliminated due to averaging over entire noise space.
+%%
+% *Min-norm* method also gives 3 narrowband peaks at the same place as the
+% AR Covariance method. The optimal min-norm vector calcuated gives highly acuurate peaks 
+% but fails to eradicate undesired non-prominent peaks along the spectrum as in MUSIC. 
+% However, given the lower computational cost over MUSIC and the extremely less isignificant 
+% peak values compared to AR covariance, Min-norm performs very well in spectrum esitmation.
+%%
+##### SOURCE END #####
+--></body></html>
