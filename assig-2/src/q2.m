@@ -112,21 +112,41 @@ end
 for k = 1:length(noise_vals_k)
     x = input_data(:,k);
 
-    prdgrm_psd_norm = normalize_psd(periodogram_psd);
-    AR_autocorr_psd_norm = normalize_psd(AR_autocorrelation_spectrum(x,7,noise_vals_k(k)));
-    AR_covar_psd_norm = normalize_psd(AR_covariance_spectrum(x,7,noise_vals_k(k)));
-    MUSIC_psd_norm = normalize_psd(MUSIC_spectrum(x,7,3,noise_vals_k(k)));
-    min_norm_psd_norm = normalize_psd(minimum_norm_spectrum(x,7,3,noise_vals_k(k)));
+    AR_autocorr_psd = AR_autocorrelation_spectrum(x,7,noise_vals_k(k));
+    AR_covar_psd = AR_covariance_spectrum(x,7,noise_vals_k(k));
+    MUSIC_psd = MUSIC_spectrum(x,7,3,noise_vals_k(k));
+    min_norm_psd = minimum_norm_spectrum(x,7,3,noise_vals_k(k));
 
-    all_plots = 20*log10([prdgrm_psd_norm,AR_autocorr_psd_norm,AR_covar_psd_norm,MUSIC_psd_norm,min_norm_psd_norm]);
+    prdgrm_psd_norm = normalize_psd(periodogram_psd);
+    AR_autocorr_psd_norm = normalize_psd(AR_autocorr_psd);
+    AR_covar_psd_norm = normalize_psd(AR_covar_psd);
+    MUSIC_psd_norm = normalize_psd(MUSIC_psd);
+    min_norm_psd_norm = normalize_psd(minimum_norm_psd);
+
+
+    % Unnormalized plots of PSsD estimates
+    plots = 20*log10([periodogram_psd,AR_autocorr_psd,AR_covar_psd,MUSIC_psd,min_norm_psd]);
     figure('units','normalized','outerposition',[0 0 1 1]);
-    plot(all_plots);
-    title(['Power spectral estimates x :',num2str(noise_vals_k(k))]);
+    plot(plots);
+    title(['Absolute Power spectral estimates x :',num2str(noise_vals_k(k))]);
     ylabel('dB')
     xlabel('n(1:1024)')
     xlim([0 1024])
     legend({'Periodogram', 'AR Autocorrelation', 'AR Covariance', 'MUSIC', 'Min-Norm'}, 'Location', 'SouthEast')
+    
+
+    % Normalized plots of PSD estimates
+    norm_plots = 20*log10([prdgrm_psd_norm,AR_autocorr_psd_norm,AR_covar_psd_norm,MUSIC_psd_norm,min_norm_psd_norm]);
+    figure('units','normalized','outerposition',[0 0 1 1]);
+    plot(norm_plots);
+    title(['Relative Power spectral estimates x :',num2str(noise_vals_k(k))]);
+    ylabel('normalized dB')
+    xlabel('n(1:1024)')
+    xlim([0 1024])
+    legend({'Periodogram', 'AR Autocorrelation', 'AR Covariance', 'MUSIC', 'Min-Norm'}, 'Location', 'SouthEast')
+
 end
+
 %%
 %% Comparison Study and Analysis
 % 

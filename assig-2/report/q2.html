@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>EE 779 : Assignment 2 | Q-2</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-09-26"><meta name="DC.source" content="q2.m"><style type="text/css">
+      --><title>EE 779 : Assignment 2 | Q-2</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-09-27"><meta name="DC.source" content="q2.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -142,22 +142,41 @@ xlim([0 1024])
 </pre><img vspace="5" hspace="5" src="q2_11.png" alt=""> <img vspace="5" hspace="5" src="q2_12.png" alt=""> <img vspace="5" hspace="5" src="q2_13.png" alt=""> <h2>Comparison of PSD estimate plots<a name="11"></a></h2><pre class="codeinput"><span class="keyword">for</span> k = 1:length(noise_vals_k)
     x = input_data(:,k);
 
-    prdgrm_psd_norm = normalize_psd(periodogram_psd);
-    AR_autocorr_psd_norm = normalize_psd(AR_autocorrelation_spectrum(x,7,noise_vals_k(k)));
-    AR_covar_psd_norm = normalize_psd(AR_covariance_spectrum(x,7,noise_vals_k(k)));
-    MUSIC_psd_norm = normalize_psd(MUSIC_spectrum(x,7,3,noise_vals_k(k)));
-    min_norm_psd_norm = normalize_psd(minimum_norm_spectrum(x,7,3,noise_vals_k(k)));
+    AR_autocorr_psd = AR_autocorrelation_spectrum(x,7,noise_vals_k(k));
+    AR_covar_psd = AR_covariance_spectrum(x,7,noise_vals_k(k));
+    MUSIC_psd = MUSIC_spectrum(x,7,3,noise_vals_k(k));
+    min_norm_psd = minimum_norm_spectrum(x,7,3,noise_vals_k(k));
 
-    all_plots = 20*log10([prdgrm_psd_norm,AR_autocorr_psd_norm,AR_covar_psd_norm,MUSIC_psd_norm,min_norm_psd_norm]);
+    prdgrm_psd_norm = normalize_psd(periodogram_psd);
+    AR_autocorr_psd_norm = normalize_psd(AR_autocorr_psd);
+    AR_covar_psd_norm = normalize_psd(AR_covar_psd);
+    MUSIC_psd_norm = normalize_psd(MUSIC_psd);
+    min_norm_psd_norm = normalize_psd(minimum_norm_psd);
+
+
+    <span class="comment">% Unnormalized plots of PSsD estimates</span>
+    plots = 20*log10([periodogram_psd,AR_autocorr_psd,AR_covar_psd,MUSIC_psd,min_norm_psd]);
     figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
-    plot(all_plots);
-    title([<span class="string">'Power spectral estimates x :'</span>,num2str(noise_vals_k(k))]);
+    plot(plots);
+    title([<span class="string">'Absolute Power spectral estimates x :'</span>,num2str(noise_vals_k(k))]);
     ylabel(<span class="string">'dB'</span>)
     xlabel(<span class="string">'n(1:1024)'</span>)
     xlim([0 1024])
     legend({<span class="string">'Periodogram'</span>, <span class="string">'AR Autocorrelation'</span>, <span class="string">'AR Covariance'</span>, <span class="string">'MUSIC'</span>, <span class="string">'Min-Norm'</span>}, <span class="string">'Location'</span>, <span class="string">'SouthEast'</span>)
+
+
+    <span class="comment">% Normalized plots of PSD estimates</span>
+    norm_plots = 20*log10([prdgrm_psd_norm,AR_autocorr_psd_norm,AR_covar_psd_norm,MUSIC_psd_norm,min_norm_psd_norm]);
+    figure(<span class="string">'units'</span>,<span class="string">'normalized'</span>,<span class="string">'outerposition'</span>,[0 0 1 1]);
+    plot(norm_plots);
+    title([<span class="string">'Relative Power spectral estimates x :'</span>,num2str(noise_vals_k(k))]);
+    ylabel(<span class="string">'normalized dB'</span>)
+    xlabel(<span class="string">'n(1:1024)'</span>)
+    xlim([0 1024])
+    legend({<span class="string">'Periodogram'</span>, <span class="string">'AR Autocorrelation'</span>, <span class="string">'AR Covariance'</span>, <span class="string">'MUSIC'</span>, <span class="string">'Min-Norm'</span>}, <span class="string">'Location'</span>, <span class="string">'SouthEast'</span>)
+
 <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="q2_14.png" alt=""> <img vspace="5" hspace="5" src="q2_15.png" alt=""> <img vspace="5" hspace="5" src="q2_16.png" alt=""> <h2>Comparison Study and Analysis<a name="13"></a></h2><p>The <b>periodogram</b> has multiple peaks due to the rectangular windowing. However the largest peaks are at expected maximal positions.s</p><p>The <b>AR autocorrelation method</b> shows 2 small non-prominent wideband peaks with no so great accuracy. This is due to order limitations.</p><p>The <b>AR covariance method</b> gives a good spectral estimate with 3 constricted peaks the locations near the correct value and small lobes. There are unsual spikes along the spectrum with lower and non-prominent peak values.</p><p>The <b>MUSIC</b> method also gives 3 narrowband peaks at the same place as the AR Covariance method. One improvement over AR covariance is that other insignificant peaks along the spectrum are eliminated due to averaging over entire noise space.</p><p><b>Min-norm</b> method also gives 3 narrowband peaks at the same place as the AR Covariance method. The optimal min-norm vector calcuated gives highly acuurate peaks but fails to eradicate undesired non-prominent peaks along the spectrum as in MUSIC. However, given the lower computational cost over MUSIC and the extremely less isignificant peak values compared to AR covariance, Min-norm performs very well in spectrum esitmation.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="q2_14.png" alt=""> <img vspace="5" hspace="5" src="q2_15.png" alt=""> <img vspace="5" hspace="5" src="q2_16.png" alt=""> <img vspace="5" hspace="5" src="q2_17.png" alt=""> <img vspace="5" hspace="5" src="q2_18.png" alt=""> <img vspace="5" hspace="5" src="q2_19.png" alt=""> <h2>Comparison Study and Analysis<a name="13"></a></h2><p>The <b>periodogram</b> has multiple peaks due to the rectangular windowing. However the largest peaks are at expected maximal positions.s</p><p>The <b>AR autocorrelation method</b> shows 2 small non-prominent wideband peaks with no so great accuracy. This is due to order limitations.</p><p>The <b>AR covariance method</b> gives a good spectral estimate with 3 constricted peaks the locations near the correct value and small lobes. There are unsual spikes along the spectrum with lower and non-prominent peak values.</p><p>The <b>MUSIC</b> method also gives 3 narrowband peaks at the same place as the AR Covariance method. One improvement over AR covariance is that other insignificant peaks along the spectrum are eliminated due to averaging over entire noise space.</p><p><b>Min-norm</b> method also gives 3 narrowband peaks at the same place as the AR Covariance method. The optimal min-norm vector calcuated gives highly acuurate peaks but fails to eradicate undesired non-prominent peaks along the spectrum as in MUSIC. However, given the lower computational cost over MUSIC and the extremely less isignificant peak values compared to AR covariance, Min-norm performs very well in spectrum esitmation.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% EE 779 : Assignment 2 | Q-2
 % Meet Pragnesh Shah, 13D070003
@@ -273,21 +292,41 @@ end
 for k = 1:length(noise_vals_k)
     x = input_data(:,k);
 
-    prdgrm_psd_norm = normalize_psd(periodogram_psd);
-    AR_autocorr_psd_norm = normalize_psd(AR_autocorrelation_spectrum(x,7,noise_vals_k(k)));
-    AR_covar_psd_norm = normalize_psd(AR_covariance_spectrum(x,7,noise_vals_k(k)));
-    MUSIC_psd_norm = normalize_psd(MUSIC_spectrum(x,7,3,noise_vals_k(k)));
-    min_norm_psd_norm = normalize_psd(minimum_norm_spectrum(x,7,3,noise_vals_k(k)));
+    AR_autocorr_psd = AR_autocorrelation_spectrum(x,7,noise_vals_k(k));
+    AR_covar_psd = AR_covariance_spectrum(x,7,noise_vals_k(k));
+    MUSIC_psd = MUSIC_spectrum(x,7,3,noise_vals_k(k));
+    min_norm_psd = minimum_norm_spectrum(x,7,3,noise_vals_k(k));
 
-    all_plots = 20*log10([prdgrm_psd_norm,AR_autocorr_psd_norm,AR_covar_psd_norm,MUSIC_psd_norm,min_norm_psd_norm]);
+    prdgrm_psd_norm = normalize_psd(periodogram_psd);
+    AR_autocorr_psd_norm = normalize_psd(AR_autocorr_psd);
+    AR_covar_psd_norm = normalize_psd(AR_covar_psd);
+    MUSIC_psd_norm = normalize_psd(MUSIC_psd);
+    min_norm_psd_norm = normalize_psd(minimum_norm_psd);
+
+
+    % Unnormalized plots of PSsD estimates
+    plots = 20*log10([periodogram_psd,AR_autocorr_psd,AR_covar_psd,MUSIC_psd,min_norm_psd]);
     figure('units','normalized','outerposition',[0 0 1 1]);
-    plot(all_plots);
-    title(['Power spectral estimates x :',num2str(noise_vals_k(k))]);
+    plot(plots);
+    title(['Absolute Power spectral estimates x :',num2str(noise_vals_k(k))]);
     ylabel('dB')
     xlabel('n(1:1024)')
     xlim([0 1024])
     legend({'Periodogram', 'AR Autocorrelation', 'AR Covariance', 'MUSIC', 'Min-Norm'}, 'Location', 'SouthEast')
+    
+
+    % Normalized plots of PSD estimates
+    norm_plots = 20*log10([prdgrm_psd_norm,AR_autocorr_psd_norm,AR_covar_psd_norm,MUSIC_psd_norm,min_norm_psd_norm]);
+    figure('units','normalized','outerposition',[0 0 1 1]);
+    plot(norm_plots);
+    title(['Relative Power spectral estimates x :',num2str(noise_vals_k(k))]);
+    ylabel('normalized dB')
+    xlabel('n(1:1024)')
+    xlim([0 1024])
+    legend({'Periodogram', 'AR Autocorrelation', 'AR Covariance', 'MUSIC', 'Min-Norm'}, 'Location', 'SouthEast')
+
 end
+
 %%
 %% Comparison Study and Analysis
 % 
