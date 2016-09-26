@@ -6,9 +6,13 @@
 
 * Power Spectral Estimation using:
   * Periodogram,
-  * Bartlett,
   * Welch,
   * Blackman-Tukey
 
-### Project Code
+#### Assignment 2
 
+* Power Spectral Estimation using:
+  * AR model using autocorrelation,
+  * AR model using covariance,
+  * MUSIC,
+  * Minimum-Norm,
