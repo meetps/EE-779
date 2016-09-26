@@ -1,0 +1,382 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>EE 779 : Assignment 2 | Q-1</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-09-27"><meta name="DC.source" content="q1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>EE 779 : Assignment 2 | Q-1</h1><!--introduction--><p>Meet Pragnesh Shah, 13D070003</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">(a) Obtaining the Correlation Toeplitz</a></li><li><a href="#3">b) Yule-Walker Method for 2nd Order AR</a></li><li><a href="#5">c) Prediction Error Signal and Variance</a></li><li><a href="#6">d) First order linear predictive model</a></li><li><a href="#9">e) 1st Order AR Power Spectral estimate</a></li><li><a href="#12">e) 2nd Order AR Power Spectral estimate</a></li><li><a href="#14">g) Power spectrum using best periodogram method | <b>Blackman-Tuckey</b></a></li><li><a href="#16">Comparison Study of spectrum estimates and analysis</a></li></ul></div><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+</pre><h2>(a) Obtaining the Correlation Toeplitz<a name="2"></a></h2><pre class="codeinput">x = getdata(<span class="string">'../data/S01.DAT'</span>);
+N = length(x);
+<span class="comment">% AR model order = 2 as we are using a 3*3 corr matrix</span>
+p = 2;
+r = zeros(p+1, 1);
+<span class="keyword">for</span> i = 0:p,
+    r(i+1) = x(1:N-i)*x(i+1:N)'/N;
+<span class="keyword">end</span>
+x = x';
+
+<span class="comment">% Forming the toepltiz matrix</span>
+toeplitz33 = [r(1) r(2) r(3);
+	   r(2) r(1) r(2);
+	   r(3) r(2) r(1)];
+
+disp(<span class="string">'The 3x3 Toeplitz matrix is :'</span>);
+disp(toeplitz33);
+</pre><pre class="codeoutput">The 3x3 Toeplitz matrix is :
+    7.8935    7.3366    6.8760
+    7.3366    7.8935    7.3366
+    6.8760    7.3366    7.8935
+
+</pre><h2>b) Yule-Walker Method for 2nd Order AR<a name="3"></a></h2><p>From LP and solve for AR coeefs from Toeplitz matix entries and compute theoretical and prediction error variances</p><pre class="codeinput">upper_block = toeplitz33(2:end,2:end);
+r_AR2 = -[r(2),r(3)]';
+AR2_coeffs = inv(upper_block)*r_AR2;
+AR2_coeffs = [1,AR2_coeffs.']';
+
+theoretical_AR2_variance = 0;
+<span class="keyword">for</span> j = 1:p+1
+   theoretical_AR2_variance = theoretical_AR2_variance + AR2_coeffs(j)*conj(r(j));
+<span class="keyword">end</span>
+error_AR2 = sqrt(abs(theoretical_AR2_variance));
+
+disp([<span class="string">'The theoretical variance for 2nd order model :'</span>, num2str(theoretical_AR2_variance)]);
+disp(<span class="string">'2nd order AR model params:'</span>);
+disp(AR2_coeffs);
+</pre><pre class="codeoutput">The theoretical variance for 2nd order model :1.0714
+2nd order AR model params:
+    1.0000
+   -0.8802
+   -0.0530
+
+</pre><h2>c) Prediction Error Signal and Variance<a name="5"></a></h2><p>It compares quite well to the theoretical error variance.</p><pre class="codeinput">prediction_error_AR2 = zeros(length(x),1);
+prediction_error_AR2 =  AR2_coeffs(1)*x + (AR2_coeffs(2)*[0 x(1:end-1)'] + AR2_coeffs(3)*[0 0 x(1:end-2)'])';
+prediction_AR2_variance = var(prediction_error_AR2);
+disp([<span class="string">'The prediction error variance for 2nd order model :'</span>, num2str(prediction_AR2_variance)]);
+
+figure;
+plot(prediction_error_AR2);
+title(<span class="string">'Prediction error for AR2'</span>);
+xlabel(<span class="string">'n(0:512)'</span>);
+ylabel(<span class="string">'error(n)'</span>);
+</pre><pre class="codeoutput">The prediction error variance for 2nd order model :1.0684
+</pre><img vspace="5" hspace="5" src="q1_01.png" alt=""> <h2>d) First order linear predictive model<a name="6"></a></h2><p>We solve the YW equations from the upper (p-1)*(p-1) block of the toeplitz and solve for (order-1) AR model and obtain the model params and variances.</p><pre class="codeinput">p = 1;
+toeplitz22 = toeplitz33(1:2,1:2);
+toeplitz22
+upper_block = toeplitz22(2:end,2:end);
+r_AR1 = -[r(2)]';
+AR1_coeffs = inv(upper_block)*r_AR1;
+AR1_coeffs = [1,AR1_coeffs.']';
+theoretical_AR1_variance = 0;
+<span class="keyword">for</span> j = 1:p+1
+   theoretical_AR1_variance = theoretical_AR1_variance + AR1_coeffs(j)*conj(r(j));
+<span class="keyword">end</span>
+
+error_AR1 = sqrt(abs(theoretical_AR1_variance));
+
+<span class="comment">% Variance in order 1 is more than that in order 2 (intuitive and obvious).</span>
+disp([<span class="string">'The theoretical variance for 1st order model :'</span>, num2str(theoretical_AR2_variance)]);
+disp([<span class="string">'The theoretical variance for 2nd order model :'</span>, num2str(theoretical_AR1_variance)]);
+disp(<span class="string">'1st order AR model params:'</span>);
+disp(AR1_coeffs);
+
+prediction_error_AR1 = zeros(length(x),1);
+prediction_error_AR1 = AR1_coeffs(1)*x + (AR1_coeffs(2)*[0 x(1:end-1)'])';
+error_sq_pred_AR1 = var(prediction_error_AR1);
+
+figure;
+plot(prediction_error_AR1);
+title(<span class="string">'Prediction error for AR1'</span>);
+xlabel(<span class="string">'n(0:512)'</span>);
+ylabel(<span class="string">'error(n)'</span>);
+</pre><pre class="codeoutput">
+toeplitz22 =
+
+    7.8935    7.3366
+    7.3366    7.8935
+
+The theoretical variance for 1st order model :1.0714
+The theoretical variance for 2nd order model :1.0744
+1st order AR model params:
+    1.0000
+   -0.9295
+
+</pre><img vspace="5" hspace="5" src="q1_02.png" alt=""> <h2>e) 1st Order AR Power Spectral estimate<a name="9"></a></h2><p>We obtain the psd estimate from the AR model params</p><pre class="codeinput">figure;
+[h,w] = freqz(error_AR1,[AR1_coeffs.'],<span class="string">'whole'</span>,1024);
+psd_AR1 = abs(fftshift(h));
+freq = w - pi;
+plot(freq,10*log(psd_AR1));
+title(<span class="string">'PSD estimate of AR1'</span>);
+xlabel(<span class="string">'w'</span>);
+ylabel(<span class="string">'PSD in dB'</span>);
+</pre><img vspace="5" hspace="5" src="q1_03.png" alt=""> <h2>e) 2nd Order AR Power Spectral estimate<a name="12"></a></h2><p>We obtain the psd estimate from the AR model params</p><pre class="codeinput">figure;
+[h,w] = freqz(error_AR2,[AR1_coeffs.'],<span class="string">'whole'</span>,1024);
+psd_AR2 = abs(fftshift(h));
+freq = w - pi;
+plot(freq,10*log(psd_AR2));
+title(<span class="string">'Power Spectrum estimate of AR2'</span>);
+xlabel(<span class="string">'w'</span>);
+ylabel(<span class="string">'PSD in dB'</span>);
+</pre><img vspace="5" hspace="5" src="q1_04.png" alt=""> <h2>g) Power spectrum using best periodogram method | <b>Blackman-Tuckey</b><a name="14"></a></h2><p>Using Bartlett Window of length 32</p><pre class="codeinput">fft_len = 1024;
+N = 128;
+<span class="comment">% zero padding signal</span>
+x_padded = zeros(fft_len,1);
+x_padded(1:N) = x(1:N);
+fft_xN = fftshift(fft(x_padded, fft_len));
+psd_prdgrm = (abs(fft_xN).^2)/N;
+figure;
+freq = linspace(-pi,pi,fft_len);
+plot(freq,10*log(psd_prdgrm));
+title(<span class="string">'PSD estimate using periodogram'</span>);
+xlabel(<span class="string">'w'</span>);
+ylabel(<span class="string">'PSD'</span>);
+
+<span class="comment">% Best method (Blacman Tukey) from Assignment 1</span>
+N = length(x);
+M = 32;
+fft_len = 1024;
+psd_bt = psd_blackman_tuckey(x, M, fft_len);
+
+figure;
+freq = linspace(-pi,pi,fft_len);
+plot(freq,10*log(psd_bt));
+
+title(<span class="string">'Power specctrum estimate using Blackman Tukey method'</span>);
+xlabel(<span class="string">'w'</span>);
+ylabel(<span class="string">'PSD in dB'</span>);
+</pre><img vspace="5" hspace="5" src="q1_05.png" alt=""> <img vspace="5" hspace="5" src="q1_06.png" alt=""> <h2>Comparison Study of spectrum estimates and analysis<a name="16"></a></h2><p>The <b>first order AR</b> prediction gives one <b>slightly</b> wide peak. This is obvious from the fact that it can only model a single maxima.</p><p>The <b>second order AR</b> prediction shows 1 considerably narrow peak with lower signal prediction error variance. This is obvious from the fact that it can only model two maximas.</p><p>The <b>periodogram</b> shows a spectrum with many peaks due to rectangular windowing (with two major peaks near the actual maxima) This number of peaks cannot be modeled by an order-1 or order-2 AR model.</p><p>The <b>Blackman-Tuckey</b> method has one single <b>relatively wider</b> peak at the appropriate location and small wide insignificant crusts along the spectrum.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% EE 779 : Assignment 2 | Q-1
+% Meet Pragnesh Shah, 13D070003
+%%
+
+close all;	
+clear all;
+
+%% (a) Obtaining the Correlation Toeplitz
+
+x = getdata('../data/S01.DAT');
+N = length(x);
+% AR model order = 2 as we are using a 3*3 corr matrix
+p = 2;
+r = zeros(p+1, 1);
+for i = 0:p,
+    r(i+1) = x(1:N-i)*x(i+1:N)'/N;
+end
+x = x';
+
+% Forming the toepltiz matrix
+toeplitz33 = [r(1) r(2) r(3); 
+	   r(2) r(1) r(2); 
+	   r(3) r(2) r(1)];
+
+disp('The 3x3 Toeplitz matrix is :');
+disp(toeplitz33);
+
+%% b) Yule-Walker Method for 2nd Order AR
+% From LP and solve for AR coeefs from Toeplitz matix entries 
+% and compute theoretical and prediction error variances
+%%
+
+upper_block = toeplitz33(2:end,2:end);
+r_AR2 = -[r(2),r(3)]';
+AR2_coeffs = inv(upper_block)*r_AR2;
+AR2_coeffs = [1,AR2_coeffs.']';
+
+theoretical_AR2_variance = 0;
+for j = 1:p+1
+   theoretical_AR2_variance = theoretical_AR2_variance + AR2_coeffs(j)*conj(r(j));
+end
+error_AR2 = sqrt(abs(theoretical_AR2_variance));
+
+disp(['The theoretical variance for 2nd order model :', num2str(theoretical_AR2_variance)]);
+disp('2nd order AR model params:');
+disp(AR2_coeffs);
+
+%% c) Prediction Error Signal and Variance
+% It compares quite well to the theoretical error variance.
+prediction_error_AR2 = zeros(length(x),1);
+prediction_error_AR2 =  AR2_coeffs(1)*x + (AR2_coeffs(2)*[0 x(1:end-1)'] + AR2_coeffs(3)*[0 0 x(1:end-2)'])';
+prediction_AR2_variance = var(prediction_error_AR2);
+disp(['The prediction error variance for 2nd order model :', num2str(prediction_AR2_variance)]);
+
+figure;
+plot(prediction_error_AR2);
+title('Prediction error for AR2');
+xlabel('n(0:512)');
+ylabel('error(n)');
+
+%% d) First order linear predictive model
+% We solve the YW equations from the upper (p-1)*(p-1)
+% block of the toeplitz and solve for (order-1) AR model 
+% and obtain the model params and variances.
+%%
+
+p = 1;
+toeplitz22 = toeplitz33(1:2,1:2);
+toeplitz22
+upper_block = toeplitz22(2:end,2:end);
+r_AR1 = -[r(2)]';
+AR1_coeffs = inv(upper_block)*r_AR1;
+AR1_coeffs = [1,AR1_coeffs.']';
+theoretical_AR1_variance = 0;
+for j = 1:p+1
+   theoretical_AR1_variance = theoretical_AR1_variance + AR1_coeffs(j)*conj(r(j));
+end
+
+error_AR1 = sqrt(abs(theoretical_AR1_variance));
+
+% Variance in order 1 is more than that in order 2 (intuitive and obvious).
+disp(['The theoretical variance for 1st order model :', num2str(theoretical_AR2_variance)]);
+disp(['The theoretical variance for 2nd order model :', num2str(theoretical_AR1_variance)]);
+disp('1st order AR model params:');
+disp(AR1_coeffs);
+
+prediction_error_AR1 = zeros(length(x),1);
+prediction_error_AR1 = AR1_coeffs(1)*x + (AR1_coeffs(2)*[0 x(1:end-1)'])';
+error_sq_pred_AR1 = var(prediction_error_AR1);
+
+figure;
+plot(prediction_error_AR1);
+title('Prediction error for AR1');
+xlabel('n(0:512)');
+ylabel('error(n)');
+
+%%
+%% e) 1st Order AR Power Spectral estimate 
+% We obtain the psd estimate from the AR model params 
+%% 
+figure;
+[h,w] = freqz(error_AR1,[AR1_coeffs.'],'whole',1024);
+psd_AR1 = abs(fftshift(h));
+freq = w - pi;
+plot(freq,10*log(psd_AR1));
+title('PSD estimate of AR1');
+xlabel('w');
+ylabel('PSD in dB');
+
+%%
+%% e) 2nd Order AR Power Spectral estimate 
+% We obtain the psd estimate from the AR model params 
+%% 
+figure;
+[h,w] = freqz(error_AR2,[AR1_coeffs.'],'whole',1024);
+psd_AR2 = abs(fftshift(h));
+freq = w - pi;
+plot(freq,10*log(psd_AR2));
+title('Power Spectrum estimate of AR2');
+xlabel('w');
+ylabel('PSD in dB');
+
+%% g) Power spectrum using best periodogram method | *Blackman-Tuckey*
+% Using Bartlett Window of length 32
+%%
+
+fft_len = 1024;
+N = 128;
+% zero padding signal
+x_padded = zeros(fft_len,1);
+x_padded(1:N) = x(1:N);
+fft_xN = fftshift(fft(x_padded, fft_len));
+psd_prdgrm = (abs(fft_xN).^2)/N;
+figure;
+freq = linspace(-pi,pi,fft_len);
+plot(freq,10*log(psd_prdgrm));
+title('PSD estimate using periodogram');
+xlabel('w');
+ylabel('PSD');
+
+% Best method (Blacman Tukey) from Assignment 1
+N = length(x);
+M = 32;
+fft_len = 1024;
+psd_bt = psd_blackman_tuckey(x, M, fft_len);
+
+figure;
+freq = linspace(-pi,pi,fft_len);
+plot(freq,10*log(psd_bt));
+
+title('Power specctrum estimate using Blackman Tukey method');
+xlabel('w');
+ylabel('PSD in dB');
+
+%% Comparison Study of spectrum estimates and analysis
+%
+% The *first order AR* prediction gives one *slightly* wide peak.
+% This is obvious from the fact that it can only model a single
+% maxima. 
+%
+% The *second order AR* prediction shows 1 considerably narrow peak with 
+% lower signal prediction error variance. This is obvious from the fact that 
+% it can only model two maximas.
+%
+% The *periodogram* shows a spectrum with many peaks due to rectangular windowing
+% (with two major peaks near the actual maxima) This number of peaks cannot be 
+% modeled by an order-1 or order-2 AR model.
+%
+% The *Blackman-Tuckey* method has one single *relatively wider* peak at the 
+% appropriate location and small wide insignificant crusts along the spectrum.
+%
+##### SOURCE END #####
+--></body></html>

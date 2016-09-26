@@ -57,6 +57,7 @@ plot(prediction_error_AR2);
 title('Prediction error for AR2');
 xlabel('n(0:512)');
 ylabel('error(n)');
+set(gcf, 'Position', get(0, 'Screensize'));
 
 %% d) First order linear predictive model
 % We solve the YW equations from the upper (p-1)*(p-1)
@@ -69,56 +70,60 @@ toeplitz22 = toeplitz33(1:2,1:2);
 toeplitz22
 upper_block = toeplitz22(2:end,2:end);
 r_AR1 = -[r(2)]';
-AR1_coeffs = inv(upper_block)*r_AR1;
-AR1_coeffs = [1,AR1_coeffs.']';
-theoretical_AR1_variance = 0;
+a_AR1 = inv(upper_block)*r_AR1;
+a_AR1 = [1,a_AR1.']';
+error_sq_AR1 = 0;
 for j = 1:p+1
-   theoretical_AR1_variance = theoretical_AR1_variance + AR1_coeffs(j)*conj(r(j));
+   error_sq_AR1 = error_sq_AR1 + a_AR1(j)*conj(r(j));
 end
 
-error_AR1 = sqrt(abs(theoretical_AR1_variance));
+error_AR1 = sqrt(abs(error_sq_AR1));
 
 % Variance in order 1 is more than that in order 2 (intuitive and obvious).
 disp(['The theoretical variance for 1st order model :', num2str(theoretical_AR2_variance)]);
-disp(['The theoretical variance for 2nd order model :', num2str(theoretical_AR1_variance)]);
+disp(['The theoretical variance for 2nd order model :', num2str(error_sq_AR1)]);
 disp('1st order AR model params:');
-disp(AR1_coeffs);
+disp(a_AR1);
 
-prediction_error_AR1 = zeros(length(x),1);
-prediction_error_AR1 = AR1_coeffs(1)*x + (AR1_coeffs(2)*[0 x(1:end-1)'])';
-error_sq_pred_AR1 = var(prediction_error_AR1);
+err_pred_AR1 = zeros(length(x),1);
+err_pred_AR1 = a_AR1(1)*x + (a_AR1(2)*[0 x(1:end-1)'])';
+error_sq_pred_AR1 = var(err_pred_AR1);
 
-figure;
-plot(prediction_error_AR1);
+fig = figure();
+plot(err_pred_AR1);
 title('Prediction error for AR1');
-xlabel('n(0:512)');
-ylabel('error(n)');
+xlabel('n');
+ylabel('e[n]');
+set(gcf, 'Position', get(0, 'Screensize'));
+
 
 %%
 %% e) 1st Order AR Power Spectral estimate 
 % We obtain the psd estimate from the AR model params 
 %% 
-figure;
-[h,w] = freqz(error_AR1,[AR1_coeffs.'],'whole',1024);
+fig = figure();
+[h,w] = freqz(error_AR1,[a_AR1.'],'whole',1024);
 psd_AR1 = abs(fftshift(h));
 freq = w - pi;
 plot(freq,10*log(psd_AR1));
 title('PSD estimate of AR1');
 xlabel('w');
-ylabel('PSD in dB');
+ylabel('PSD');
+set(gcf, 'Position', get(0, 'Screensize'));
 
 %%
 %% e) 2nd Order AR Power Spectral estimate 
 % We obtain the psd estimate from the AR model params 
 %% 
-figure;
-[h,w] = freqz(error_AR2,[AR1_coeffs.'],'whole',1024);
+fig = figure();
+[h,w] = freqz(error_AR2,[a_AR1.'],'whole',1024);
 psd_AR2 = abs(fftshift(h));
 freq = w - pi;
 plot(freq,10*log(psd_AR2));
-title('Power Spectrum estimate of AR2');
+title('PSD estimate of AR2');
 xlabel('w');
-ylabel('PSD in dB');
+ylabel('PSD');
+set(gcf, 'Position', get(0, 'Screensize'));
 
 %% g) Power spectrum using best periodogram method | *Blackman-Tuckey*
 % Using Bartlett Window of length 32
@@ -131,26 +136,29 @@ x_padded = zeros(fft_len,1);
 x_padded(1:N) = x(1:N);
 fft_xN = fftshift(fft(x_padded, fft_len));
 psd_prdgrm = (abs(fft_xN).^2)/N;
-figure;
+fig = figure;
 freq = linspace(-pi,pi,fft_len);
 plot(freq,10*log(psd_prdgrm));
 title('PSD estimate using periodogram');
 xlabel('w');
 ylabel('PSD');
+set(gcf, 'Position', get(0, 'Screensize'));
 
 % Best method (Blacman Tukey) from Assignment 1
 N = length(x);
 M = 32;
 fft_len = 1024;
+
 psd_bt = psd_blackman_tuckey(x, M, fft_len);
 
-figure;
+fig = figure;
 freq = linspace(-pi,pi,fft_len);
 plot(freq,10*log(psd_bt));
 
-title('Power specctrum estimate using Blackman Tukey method');
+title('PSD estimate using Blackman Tukey method');
 xlabel('w');
-ylabel('PSD in dB');
+ylabel('PSD');
+set(gcf, 'Position', get(0, 'Screensize'));
 
 %% Comparison Study of spectrum estimates and analysis
 %
@@ -158,9 +166,8 @@ ylabel('PSD in dB');
 % This is obvious from the fact that it can only model a single
 % maxima. 
 %
-% The *second order AR* prediction shows 1 considerably narrow peak with 
-% lower signal prediction error variance. This is obvious from the fact that 
-% it can only model two maximas.
+% The *second order AR* prediction shows 1 considerably narrow peak.
+% This is obvious from the fact that it can only model two maximas.
 %
 % The *periodogram* shows a spectrum with many peaks due to rectangular windowing
 % (with two major peaks near the actual maxima) This number of peaks cannot be 
