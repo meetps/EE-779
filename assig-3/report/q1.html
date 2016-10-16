@@ -1,0 +1,279 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>EE 779 : Assignment 3 | Q-1</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-10-17"><meta name="DC.source" content="q1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>EE 779 : Assignment 3 | Q-1</h1><!--introduction--><p>Meet Pragnesh Shah, 13D070003</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">a) Theta = 15</a></li><li><a href="#2">a) i. Beamforming Method</a></li><li><a href="#3">a) ii. Capon Method</a></li><li><a href="#4">a) iii. Root-Music Estimate</a></li><li><a href="#5">a) iv. ESPRIT Estimate</a></li><li><a href="#6">b) Theta = 7.5</a></li><li><a href="#7">b) i. Beamforming Method</a></li><li><a href="#8">b) ii. Capon Method</a></li><li><a href="#9">b) iii. Root-Music Estimate</a></li><li><a href="#10">b) iv. ESPRIT Estimate</a></li><li><a href="#11">Notes and Conclusion</a></li><li><a href="#12"><b>theta = 15</b></a></li><li><a href="#13"><b>theta = 7.5</b></a></li></ul></div><h2>a) Theta = 15<a name="1"></a></h2><pre class="codeinput">close <span class="string">all</span>;
+clear <span class="string">all</span>;
+
+P         = eye(2);
+n_samples = 128;
+n_iter    = 50;
+y         = zeros(10, 100, 50);
+beamf_phi = zeros(50, n_samples);
+capon_phi = zeros(50, n_samples);
+theta1    = zeros(50, 2);
+theta2    = zeros(50, 2);
+
+theta = 15;
+<span class="keyword">for</span> i=1:n_iter,
+    y(:,:,i)       = uladata([0, theta], P, 100, 1, 10, 0.5);
+    beamf_phi(i,:) = beamform(y(:,:,i), n_samples, 0.5);
+    capon_phi(i,:) = capon_sp(y(:,:,i), n_samples, 0.5);
+    theta1(i,:)    = root_music_doa(y(:,:,i), 2, 0.5);
+    theta2(i,:)    = esprit_doa(y(:,:,i), 2, 0.5);
+<span class="keyword">end</span>
+
+phi_avg_beam(1:n_samples)  = mean(beamf_phi(:,1:n_samples));
+phi_avg_capon(1:n_samples) = mean(capon_phi(:,1:n_samples));
+
+beamf         = phi_avg_beam;
+capon         = phi_avg_capon;
+root_theta    = theta1;
+espirit_theta = theta2;
+</pre><h2>a) i. Beamforming Method<a name="2"></a></h2><pre class="codeinput">fig = figure;
+plot(20*log10(beamf))
+xlabel(<span class="string">'n'</span>)
+ylabel(<span class="string">'Power (dB)'</span>)
+title(<span class="string">'Beamforming Spatial Spectra'</span>);
+</pre><img vspace="5" hspace="5" src="q1_01.png" alt=""> <h2>a) ii. Capon Method<a name="3"></a></h2><pre class="codeinput">fig = figure;
+plot(20*log10(capon))
+xlabel(<span class="string">'n'</span>)
+ylabel(<span class="string">'Power (dB)'</span>)
+title(<span class="string">'Capons Spatial Spectra'</span>);
+</pre><img vspace="5" hspace="5" src="q1_02.png" alt=""> <h2>a) iii. Root-Music Estimate<a name="4"></a></h2><pre class="codeinput">fig = figure;
+stem(root_theta(:), ones(100,2));
+title(<span class="string">'Root-Music'</span>)
+xlabel(<span class="string">'theta'</span>)
+</pre><img vspace="5" hspace="5" src="q1_03.png" alt=""> <h2>a) iv. ESPRIT Estimate<a name="5"></a></h2><pre class="codeinput">fig = figure;
+stem(espirit_theta(:), ones(100,1));
+title(<span class="string">'ESPRIT'</span>)
+xlabel(<span class="string">'theta'</span>)
+</pre><img vspace="5" hspace="5" src="q1_04.png" alt=""> <h2>b) Theta = 7.5<a name="6"></a></h2><pre class="codeinput">theta = 7.5;
+<span class="keyword">for</span> i=1:n_iter,
+    y(:,:,i)       = uladata([0, theta], P, 100, 1, 10, 0.5);
+    beamf_phi(i,:) = beamform(y(:,:,i), n_samples, 0.5);
+    capon_phi(i,:) = capon_sp(y(:,:,i), n_samples, 0.5);
+    theta1(i,:)    = root_music_doa(y(:,:,i), 2, 0.5);
+    theta2(i,:)    = esprit_doa(y(:,:,i), 2, 0.5);
+<span class="keyword">end</span>
+phi_avg_beam(1:n_samples)  = mean(beamf_phi(:,1:n_samples));
+phi_avg_capon(1:n_samples) = mean(capon_phi(:,1:n_samples));
+beamf         = phi_avg_beam;
+capon         = phi_avg_capon;
+root_theta    = theta1;
+espirit_theta = theta2;
+</pre><h2>b) i. Beamforming Method<a name="7"></a></h2><pre class="codeinput">fig = figure;
+plot(20*log10(beamf))
+xlabel(<span class="string">'n'</span>)
+ylabel(<span class="string">'Power (dB)'</span>)
+title(<span class="string">'Beamforming Spatial Spectra'</span>);
+</pre><img vspace="5" hspace="5" src="q1_05.png" alt=""> <h2>b) ii. Capon Method<a name="8"></a></h2><pre class="codeinput">fig = figure;
+plot(20*log10(capon))
+ylabel(<span class="string">'Power (dB)'</span>)
+xlabel(<span class="string">'n'</span>)
+title(<span class="string">'Capons Spatial Spectra'</span>);
+</pre><img vspace="5" hspace="5" src="q1_06.png" alt=""> <h2>b) iii. Root-Music Estimate<a name="9"></a></h2><pre class="codeinput">fig = figure;
+stem(root_theta(:), ones(100,1));
+title(<span class="string">'Root-Music'</span>)
+xlabel(<span class="string">'theta'</span>)
+</pre><img vspace="5" hspace="5" src="q1_07.png" alt=""> <h2>b) iv. ESPRIT Estimate<a name="10"></a></h2><pre class="codeinput">fig = figure;
+stem(espirit_theta(:), ones(100,1));
+title(<span class="string">'ESPRIT'</span>)
+xlabel(<span class="string">'theta'</span>)
+</pre><img vspace="5" hspace="5" src="q1_08.png" alt=""> <h2>Notes and Conclusion<a name="11"></a></h2><p>Since the experiments are stochastic in nature, a single run of the results is not credible. Hence I run the code for <b>n_iters = 100</b> and then take the mean of the results to maintain the credibility of the results.</p><h2><b>theta = 15</b><a name="12"></a></h2><p>All methods are able to resolve the sources distinctly as can be seen from the peaks in the plots.</p><p>Capons method gives a <b>better estimate</b> as the peaks are sharper thus have <b>low variance</b> .</p><p>Root Music estimates are very dense around the actual mean value, whilst the ESPIRIT methods are spread over the mean and the estimates have a <b>higher variance</b> .</p><p>Thus <b>Capon &gt; Beamforming</b> and <b>RootMusic &gt; ESPRIT</b> .</p><h2><b>theta = 7.5</b><a name="13"></a></h2><p>Beamforming isn't able to resolve the peaks, Capons is able to get two peaks but the peaks cannot be resolved as nicely as in the former case of theta = 15.</p><p>Root Music estimates are very dense around the actual mean value, whilst the ESPIRIT methods are spread over the mean and the estimates have a <b>higher variance</b> . But both Root Music and ESPIRIT estimates for <b>theta = 7.5</b> have a larger variance than in the case of <b>theta = 15</b> .</p><p>Thus <b>Capon &gt; Beamforming</b> and <b>RootMusic &gt; ESPRIT</b> .</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% EE 779 : Assignment 3 | Q-1
+% Meet Pragnesh Shah, 13D070003
+%%
+
+%% a) Theta = 15
+close all;
+clear all;
+
+P         = eye(2);
+n_samples = 128;
+n_iter    = 50;
+y         = zeros(10, 100, 50);
+beamf_phi = zeros(50, n_samples);
+capon_phi = zeros(50, n_samples);
+theta1    = zeros(50, 2);
+theta2    = zeros(50, 2);
+
+theta = 15;
+for i=1:n_iter,
+    y(:,:,i)       = uladata([0, theta], P, 100, 1, 10, 0.5);
+    beamf_phi(i,:) = beamform(y(:,:,i), n_samples, 0.5);
+    capon_phi(i,:) = capon_sp(y(:,:,i), n_samples, 0.5);
+    theta1(i,:)    = root_music_doa(y(:,:,i), 2, 0.5);
+    theta2(i,:)    = esprit_doa(y(:,:,i), 2, 0.5);
+end 
+
+phi_avg_beam(1:n_samples)  = mean(beamf_phi(:,1:n_samples));
+phi_avg_capon(1:n_samples) = mean(capon_phi(:,1:n_samples));
+
+beamf         = phi_avg_beam;
+capon         = phi_avg_capon;
+root_theta    = theta1;
+espirit_theta = theta2;
+
+%% a) i. Beamforming Method
+fig = figure; 
+plot(20*log10(beamf))
+xlabel('n')
+ylabel('Power (dB)')
+title('Beamforming Spatial Spectra');
+
+%% a) ii. Capon Method
+
+fig = figure; 
+plot(20*log10(capon))
+xlabel('n')
+ylabel('Power (dB)')
+title('Capons Spatial Spectra');
+%% a) iii. Root-Music Estimate
+
+fig = figure; 
+stem(root_theta(:), ones(100,2));
+title('Root-Music')
+xlabel('theta')
+%% a) iv. ESPRIT Estimate
+
+fig = figure; 
+stem(espirit_theta(:), ones(100,1));
+title('ESPRIT')
+xlabel('theta')
+
+%% b) Theta = 7.5
+theta = 7.5;
+for i=1:n_iter,
+    y(:,:,i)       = uladata([0, theta], P, 100, 1, 10, 0.5);
+    beamf_phi(i,:) = beamform(y(:,:,i), n_samples, 0.5);
+    capon_phi(i,:) = capon_sp(y(:,:,i), n_samples, 0.5);
+    theta1(i,:)    = root_music_doa(y(:,:,i), 2, 0.5);
+    theta2(i,:)    = esprit_doa(y(:,:,i), 2, 0.5);
+end 
+phi_avg_beam(1:n_samples)  = mean(beamf_phi(:,1:n_samples));
+phi_avg_capon(1:n_samples) = mean(capon_phi(:,1:n_samples));
+beamf         = phi_avg_beam;
+capon         = phi_avg_capon;
+root_theta    = theta1;
+espirit_theta = theta2;
+
+%% b) i. Beamforming Method
+fig = figure; 
+plot(20*log10(beamf))
+xlabel('n')
+ylabel('Power (dB)')
+title('Beamforming Spatial Spectra');
+
+%% b) ii. Capon Method
+fig = figure; 
+plot(20*log10(capon))
+ylabel('Power (dB)')
+xlabel('n')
+title('Capons Spatial Spectra');
+
+%% b) iii. Root-Music Estimate
+fig = figure; 
+stem(root_theta(:), ones(100,1));
+title('Root-Music')
+xlabel('theta')
+
+%% b) iv. ESPRIT Estimate
+fig = figure; 
+stem(espirit_theta(:), ones(100,1));
+title('ESPRIT')
+xlabel('theta')
+
+%% Notes and Conclusion 
+% Since the experiments are stochastic in nature, a single run of the results 
+% is not credible. Hence I run the code for *n_iters = 100* and then take the 
+% mean of the results to maintain the credibility of the results.
+%
+%% *theta = 15*
+%
+% All methods are able to resolve the sources distinctly as can be seen from the peaks in the plots.
+%
+% Capons method gives a *better estimate* as the peaks are sharper thus have *low variance* .
+%
+% Root Music estimates are very dense around the actual mean value, whilst the ESPIRIT methods are spread
+% over the mean and the estimates have a *higher variance* .
+%
+% Thus *Capon > Beamforming* and *RootMusic > ESPRIT* .
+%
+%% *theta = 7.5*
+%
+% Beamforming isn't able to resolve the peaks, Capons is able to get two peaks
+% but the peaks cannot be resolved as nicely as in the former case of theta = 15.
+%
+% Root Music estimates are very dense around the actual mean value, whilst the ESPIRIT methods are spread
+% over the mean and the estimates have a *higher variance* . But both Root Music and ESPIRIT estimates for 
+% *theta = 7.5* have a larger variance than in the case of *theta = 15* .
+%
+% Thus *Capon > Beamforming* and *RootMusic > ESPRIT* .
+##### SOURCE END #####
+--></body></html>
