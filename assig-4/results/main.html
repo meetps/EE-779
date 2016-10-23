@@ -1,0 +1,416 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>EE 779 : Assignment 4 | Q-4</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-10-23"><meta name="DC.source" content="main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>EE 779 : Assignment 4 | Q-4</h1><!--introduction--><p>Meet Pragnesh Shah, 13D070003</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">a) Convolution matrix A</a></li><li><a href="#3">b) SVD matrix of A</a></li><li><a href="#5">c) Apply pseudo-inverse to output y with noise</a></li><li><a href="#7">d) Truncated SVD</a></li><li><a href="#8">e) Tikhonov regularization</a></li><li><a href="#9">f) Comparison and Analysis</a></li></ul></div><pre class="codeinput">clear <span class="string">all</span>;
+close <span class="string">all</span>;
+load(<span class="string">'data/blocks_deconv.mat'</span>);
+</pre><h2>a) Convolution matrix A<a name="2"></a></h2><pre class="codeinput">N = length(x);
+L = length(h);
+M = length(y);
+
+M = N + L -1;
+A = zeros(M,N);
+<span class="keyword">for</span> i = 1:M
+    <span class="keyword">for</span> j = max(1,i-length(h)+1):min(i,N)
+            A(i,j) = h(i-j+1);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2>b) SVD matrix of A<a name="3"></a></h2><pre class="codeinput">[U,S,V] = svd(A);
+largest_singular_value = S(1,1)
+smallest_singlar_value = S(rank(A),rank(A))
+p = rank(A);
+
+U_new = U(:,1:p);
+S_new = S(1:p,1:p);
+V_new = V(1:p,1:p);
+A_dagger = V_new*(inv(S_new))*U_new';
+x_est = A_dagger*y;
+
+fig = figure;
+plot(x_est);
+ylabel(<span class="string">'x[n] estimate'</span>)
+title(<span class="string">'x (A^+b) estimate'</span>);
+xlabel(<span class="string">'n'</span>)
+</pre><pre class="codeoutput">
+largest_singular_value =
+
+    0.9987
+
+
+smallest_singlar_value =
+
+    0.0029
+
+</pre><img vspace="5" hspace="5" src="main_01.png" alt=""> <p>As we use all eigenvectors for reconstruction without corruption (of y), it is nothing but transformation into eigenspace and returning back to vectospace, thus the estimate is same as the original signal.</p><h2>c) Apply pseudo-inverse to output y with noise<a name="5"></a></h2><pre class="codeinput">x_est_noisy = A_dagger*yn;
+
+fig = figure;
+plot([x_est_noisy,x]);
+x_svd_all = x_est_noisy;
+ylabel(<span class="string">'x[n]'</span>)
+title(<span class="string">'x[n] estimate with noise'</span>);
+xlabel(<span class="string">'n'</span>)
+legend(<span class="string">'x with noise'</span>,<span class="string">'x noiseless'</span>);
+
+mse_x = mean((abs(x-x_est_noisy)).^2);
+mse_y = mean((abs(y-yn)).^2);
+mse_x_svd_all = mse_x;
+mse_x
+mse_y
+</pre><pre class="codeoutput">
+mse_x =
+
+    0.7369
+
+
+mse_y =
+
+   1.0680e-04
+
+</pre><img vspace="5" hspace="5" src="main_02.png" alt=""> <p>Due to corruption with noise, the reconstruction doesn't take place efficiently. We see that we have a large mse in x and y (mse_x &gt; mse_y)</p><h2>d) Truncated SVD<a name="7"></a></h2><p>We use a limited set of singular values for reconstruction, thus attempting to reconstruct the signal from the signal space and ignore the noise space.</p><pre class="codeinput">eigenvector_list = (1:200);
+mse_x_list = zeros(size(eigenvector_list));
+mse_x_min = Inf;
+
+<span class="keyword">for</span> j = 1:length(eigenvector_list)
+    A_trunc = zeros(M,N);
+    A_dagger_trunc = zeros(N,M);
+    p = rank(A);
+    q = eigenvector_list(j);
+    <span class="keyword">for</span> k = 1:p-q
+        A_trunc = A_trunc + S(k,k)*U(:,k)*V(:,k)';
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> k = 1:p-q
+        A_dagger_trunc = A_dagger_trunc + (1/S(k,k))*V(:,k)*U(:,k)';
+    <span class="keyword">end</span>
+    x_est_noisy = A_dagger_trunc*yn;
+    mse_x = mean((abs(x-x_est_noisy)).^2);
+    mse_x_list(j) = mse_x;
+
+    <span class="keyword">if</span>(mse_x &lt; mse_x_min)
+        mse_x_min = mse_x;
+        x_svd_best = x_est_noisy;
+        best_eigen = q;
+        mse_x_svd_best = mse_x;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+best_eigen
+
+fig = figure;
+plot(eigenvector_list,mse_x_list);
+ylabel(<span class="string">'mean square error'</span>)
+title(<span class="string">'mean Square error vs n_eigen'</span>);
+xlabel(<span class="string">'n_eigen'</span>)
+
+fig = figure;
+plot([x_svd_best,x]);
+ylabel(<span class="string">'x[n]'</span>)
+title(<span class="string">'Least MSE reconstruction | Truncated SVD'</span>);
+xlabel(<span class="string">'n'</span>);
+legend(<span class="string">'Least MSE Reconstruction'</span>,<span class="string">'Ground Truth'</span>)
+</pre><pre class="codeoutput">
+best_eigen =
+
+   170
+
+</pre><img vspace="5" hspace="5" src="main_03.png" alt=""> <img vspace="5" hspace="5" src="main_04.png" alt=""> <h2>e) Tikhonov regularization<a name="8"></a></h2><pre class="codeinput"><span class="comment">% Here we use the log space to obtain the optimum as linear space is ineeficient.</span>
+
+I = eye(size(A'*A));
+delta_list = logspace(-6,0,1000);
+mse_x_list = zeros(size(delta_list));
+mse_x_min = Inf;
+<span class="keyword">for</span> j = 1:length(delta_list)
+    delta = delta_list(j);
+    x_tikhonov_est = (inv(A'*A+delta*I))*A'*yn;
+    mse_x = mean((abs(x-x_tikhonov_est)).^2);
+    mse_x_list(j) = mse_x;
+    <span class="keyword">if</span>(mse_x &lt; mse_x_min)
+        mse_x_min = mse_x;
+        x_tikhonov_best = x_tikhonov_est;
+        delta_best = delta;
+        mse_x_tikhonov_best = mse_x;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+delta_best
+
+fig = figure;
+semilogx(delta_list,mse_x_list);
+ylabel(<span class="string">'MSE vs delta'</span>)
+title(<span class="string">'MSE vs log(delta)'</span>);
+xlabel(<span class="string">'log(delta)'</span>)
+
+fig = figure;
+plot([x_tikhonov_best,x]);
+ylabel(<span class="string">'x[n]'</span>)
+title(<span class="string">'Least MSE reconstruction by Tikhonov method'</span>);
+xlabel(<span class="string">'n'</span>);
+legend(<span class="string">'Least MSE reconstruction'</span>,<span class="string">'Ground Truth'</span>)
+
+fig = figure;
+plot([x_svd_all,x_svd_best,x_tikhonov_best,x]);
+ylabel(<span class="string">'x[n]'</span>);
+title(<span class="string">'Method Comparison'</span>);
+xlabel(<span class="string">'n'</span>);
+legend(<span class="string">'non-Truncated SVD'</span>,<span class="string">'Truncated SVD Best'</span>,<span class="string">'Tikhonov Best'</span>,<span class="string">'Ground Truth'</span>);
+
+mse_x_svd_all
+mse_x_svd_best
+mse_x_tikhonov_best
+</pre><pre class="codeoutput">
+delta_best =
+
+   4.1555e-04
+
+
+mse_x_svd_all =
+
+    0.7369
+
+
+mse_x_svd_best =
+
+    0.0922
+
+
+mse_x_tikhonov_best =
+
+    0.0746
+
+</pre><img vspace="5" hspace="5" src="main_05.png" alt=""> <img vspace="5" hspace="5" src="main_06.png" alt=""> <img vspace="5" hspace="5" src="main_07.png" alt=""> <h2>f) Comparison and Analysis<a name="9"></a></h2><p>Choosing optimum value of eigenspace to reconstruct significantly improves SVD reconstruction method.</p><p>Tikhonov'smethod outperforms the truncated SVD if the optimal delta is obtained.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% EE 779 : Assignment 4 | Q-4
+% Meet Pragnesh Shah, 13D070003
+%%
+
+clear all;
+close all;
+load('data/blocks_deconv.mat');
+
+
+%% a) Convolution matrix A
+
+N = length(x);
+L = length(h);
+M = length(y);
+
+M = N + L -1;
+A = zeros(M,N);
+for i = 1:M
+    for j = max(1,i-length(h)+1):min(i,N)
+            A(i,j) = h(i-j+1);
+    end
+end
+
+%% b) SVD matrix of A
+
+[U,S,V] = svd(A);
+largest_singular_value = S(1,1)
+smallest_singlar_value = S(rank(A),rank(A))
+p = rank(A);
+
+U_new = U(:,1:p);
+S_new = S(1:p,1:p);
+V_new = V(1:p,1:p);
+A_dagger = V_new*(inv(S_new))*U_new';
+x_est = A_dagger*y;
+
+fig = figure;
+plot(x_est);
+ylabel('x[n] estimate')
+title('x (A^+b) estimate');
+xlabel('n')
+
+%%
+% As we use all eigenvectors for reconstruction without corruption (of y), it is nothing 
+% but transformation into eigenspace and returning back to vectospace, thus the 
+% estimate is same as the original signal. 
+
+
+%% c) Apply pseudo-inverse to output y with noise
+
+x_est_noisy = A_dagger*yn;
+
+fig = figure;
+plot([x_est_noisy,x]);
+x_svd_all = x_est_noisy;
+ylabel('x[n]')
+title('x[n] estimate with noise');
+xlabel('n')
+legend('x with noise','x noiseless');
+
+mse_x = mean((abs(x-x_est_noisy)).^2);
+mse_y = mean((abs(y-yn)).^2);
+mse_x_svd_all = mse_x;
+mse_x
+mse_y
+
+%%
+% Due to corruption with noise, the reconstruction doesn't take place efficiently. 
+% We see that we have a large mse in x and y (mse_x > mse_y)
+
+%% d) Truncated SVD
+% We use a limited set of singular values for reconstruction, thus attempting
+% to reconstruct the signal from the signal space and ignore the noise space.
+
+eigenvector_list = (1:200);
+mse_x_list = zeros(size(eigenvector_list));
+mse_x_min = Inf;
+
+for j = 1:length(eigenvector_list)
+    A_trunc = zeros(M,N);
+    A_dagger_trunc = zeros(N,M);
+    p = rank(A);
+    q = eigenvector_list(j);
+    for k = 1:p-q
+        A_trunc = A_trunc + S(k,k)*U(:,k)*V(:,k)';
+    end
+    for k = 1:p-q
+        A_dagger_trunc = A_dagger_trunc + (1/S(k,k))*V(:,k)*U(:,k)';
+    end
+    x_est_noisy = A_dagger_trunc*yn;
+    mse_x = mean((abs(x-x_est_noisy)).^2);
+    mse_x_list(j) = mse_x;
+  
+    if(mse_x < mse_x_min)
+        mse_x_min = mse_x;
+        x_svd_best = x_est_noisy;
+        best_eigen = q;
+        mse_x_svd_best = mse_x;
+    end    
+end
+
+best_eigen
+
+fig = figure;
+plot(eigenvector_list,mse_x_list);
+ylabel('mean square error')
+title('mean Square error vs n_eigen');
+xlabel('n_eigen')
+
+fig = figure;
+plot([x_svd_best,x]);
+ylabel('x[n]')
+title('Least MSE reconstruction | Truncated SVD');
+xlabel('n');
+legend('Least MSE Reconstruction','Ground Truth')
+
+%% e) Tikhonov regularization
+
+% Here we use the log space to obtain the optimum as linear space is ineeficient.
+
+I = eye(size(A'*A));
+delta_list = logspace(-6,0,1000);
+mse_x_list = zeros(size(delta_list));
+mse_x_min = Inf;
+for j = 1:length(delta_list)
+    delta = delta_list(j);
+    x_tikhonov_est = (inv(A'*A+delta*I))*A'*yn;
+    mse_x = mean((abs(x-x_tikhonov_est)).^2);
+    mse_x_list(j) = mse_x;
+    if(mse_x < mse_x_min)
+        mse_x_min = mse_x;
+        x_tikhonov_best = x_tikhonov_est;
+        delta_best = delta;
+        mse_x_tikhonov_best = mse_x;
+    end
+end
+
+delta_best
+
+fig = figure;
+semilogx(delta_list,mse_x_list);
+ylabel('MSE vs delta')
+title('MSE vs log(delta)');
+xlabel('log(delta)')
+
+fig = figure;
+plot([x_tikhonov_best,x]);
+ylabel('x[n]')
+title('Least MSE reconstruction by Tikhonov method');
+xlabel('n');
+legend('Least MSE reconstruction','Ground Truth')
+
+fig = figure;
+plot([x_svd_all,x_svd_best,x_tikhonov_best,x]);
+ylabel('x[n]');
+title('Method Comparison');
+xlabel('n');
+legend('non-Truncated SVD','Truncated SVD Best','Tikhonov Best','Ground Truth');
+
+mse_x_svd_all
+mse_x_svd_best
+mse_x_tikhonov_best
+
+%% f) Comparison and Analysis
+%
+% Choosing optimum value of eigenspace to reconstruct significantly improves SVD reconstruction method.
+%
+% Tikhonov'smethod outperforms the truncated SVD if the optimal delta is obtained.
+
+##### SOURCE END #####
+--></body></html>
