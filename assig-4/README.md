@@ -16,5 +16,5 @@
 
 ### Running the code 
 	
-	Run the `q1.m` file for question 1.
-	Run the `q2.m` file for question 2.
+	Run the `main.m` file entire assignment.
+

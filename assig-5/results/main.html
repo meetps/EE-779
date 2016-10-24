@@ -1,0 +1,212 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>EE 779 : PCA Assignment</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-10-24"><meta name="DC.source" content="main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>EE 779 : PCA Assignment</h1><!--introduction--><p>Meet Pragnesh Shah, 13D070003</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">PCA with k = 200</a></li><li><a href="#3">PCA with k = 100</a></li><li><a href="#4">My Implementation</a></li></ul></div><pre class="codeinput"><span class="comment">% I did the same assignment in CS663, for a more detailed explanation of</span>
+<span class="comment">% the optimization used and how reconstruction varies with number of components</span>
+<span class="comment">% please visit : http://meetshah1995.github.io/CS-663/assig-4/3/report/myMainScript.html</span>
+<span class="comment">%</span>
+<span class="comment">% I have made some changes in the pca_orl and orl data loader code to</span>
+<span class="comment">% be inline with my directory structure, that will however not make any difference</span>
+<span class="comment">% in the performance / reports.</span>
+</pre><h2>PCA with k = 200<a name="2"></a></h2><pre class="codeinput">facerecog1_meet
+<span class="comment">%</span>
+<span class="comment">% MSE in training images database is significantly low when compared to the MSE of</span>
+<span class="comment">% test image and myImg. This is due to the fact that the eigenspace defined by the</span>
+<span class="comment">% training images is specific to itself and any arbitrary image when reconstructed</span>
+<span class="comment">% with the principal components of these space will lead to large MSE in images.</span>
+<span class="comment">%</span>
+<span class="comment">% However we notice that since the database contains images of faces, that have very</span>
+<span class="comment">% generic spatial features and illumination conditions, some generality is still captured</span>
+<span class="comment">% by the eigenspace. Thus any image (i.e test image) with similar spatial features (face in the same</span>
+<span class="comment">% location and same size) can be reconstructed from this PCs with MSE in acceptable bounds.</span>
+<span class="comment">%</span>
+<span class="comment">% But when a completely arbitrary image like myImg, whose features are considerably different</span>
+<span class="comment">% from the original database is reconstructed using the PCs, the MSE is very large as can be observed.</span>
+<span class="comment">%</span>
+<span class="comment">% We can also see from the plots of eigenfaces that the PCA has generalized well for higher eigenvalues,</span>
+<span class="comment">% and the eigenfaces resemble actual faces, the resemblance however reduces for lower eigenvalues</span>
+<span class="comment">% (lesser principal components).</span>
+</pre><pre class="codeoutput"> 
+Reading in the images...
+[1/40][2/40][3/40][4/40][5/40][6/40][7/40][8/40][9/40][10/40][11/40][12/40][13/40][14/40][15/40][16/40][17/40][18/40][19/40][20/40][21/40][22/40][23/40][24/40][25/40][26/40][27/40][28/40][29/40][30/40][31/40][32/40][33/40][34/40][35/40][36/40][37/40][38/40][39/40][40/40]
+Zero mean
+PCA
+Normalising
+Creating lower dimensional subspace
+Projecting all images onto a new lower dimensional subspace
+Reading in the images...
+[1/40][2/40][3/40][4/40][5/40][6/40][7/40][8/40][9/40][10/40][11/40][12/40][13/40][14/40][15/40][16/40][17/40][18/40][19/40][20/40][21/40][22/40][23/40][24/40][25/40][26/40][27/40][28/40][29/40][30/40][31/40][32/40][33/40][34/40][35/40][36/40][37/40][38/40][39/40][40/40]
+
+trainMSE =
+
+    0.1276
+
+
+testMSE =
+
+  297.7861
+
+
+myImgMSE =
+
+   1.5830e+03
+
+</pre><img vspace="5" hspace="5" src="main_01.png" alt=""> <img vspace="5" hspace="5" src="main_02.png" alt=""> <img vspace="5" hspace="5" src="main_03.png" alt=""> <img vspace="5" hspace="5" src="main_04.png" alt=""> <img vspace="5" hspace="5" src="main_05.png" alt=""> <h2>PCA with k = 100<a name="3"></a></h2><pre class="codeinput">facerecog2_meet
+<span class="comment">%</span>
+<span class="comment">% Other error charecteristics remain same, but we can observe that the train MSE has increased, but the test and myImg MSE</span>
+<span class="comment">% is still almost similar as in case of k =200. This is very intuitive from the fact that, since test and myImg dint belong</span>
+<span class="comment">% to the PC in the first place, the reconstruction was bound to fail. One thing however to note here is that the percentage</span>
+<span class="comment">% change in test is more than in myIMG, because test image, though not belonging to the database, had very similar</span>
+<span class="comment">% characteristics to the train database (which were captured by the principal components). Now as we reduced the PCs,</span>
+<span class="comment">% the test reconstruction also deteriorated.</span>
+</pre><pre class="codeoutput"> 
+Reading in the images...
+[1/40][2/40][3/40][4/40][5/40][6/40][7/40][8/40][9/40][10/40][11/40][12/40][13/40][14/40][15/40][16/40][17/40][18/40][19/40][20/40][21/40][22/40][23/40][24/40][25/40][26/40][27/40][28/40][29/40][30/40][31/40][32/40][33/40][34/40][35/40][36/40][37/40][38/40][39/40][40/40]
+Zero mean
+PCA
+Normalising
+Creating lower dimensional subspace
+Projecting all images onto a new lower dimensional subspace
+Reading in the images...
+[1/40][2/40][3/40][4/40][5/40][6/40][7/40][8/40][9/40][10/40][11/40][12/40][13/40][14/40][15/40][16/40][17/40][18/40][19/40][20/40][21/40][22/40][23/40][24/40][25/40][26/40][27/40][28/40][29/40][30/40][31/40][32/40][33/40][34/40][35/40][36/40][37/40][38/40][39/40][40/40]
+
+trainMSE =
+
+  124.3000
+
+
+testMSE =
+
+  343.9432
+
+
+myImgMSE =
+
+   1.7987e+03
+
+</pre><img vspace="5" hspace="5" src="main_06.png" alt=""> <img vspace="5" hspace="5" src="main_07.png" alt=""> <img vspace="5" hspace="5" src="main_08.png" alt=""> <img vspace="5" hspace="5" src="main_09.png" alt=""> <img vspace="5" hspace="5" src="main_10.png" alt=""> <h2>My Implementation<a name="4"></a></h2><p>The code for the PCA method discussed in the class cannot be implemented given the memory constraints as it forms a matrix of almost 10k * 10k, and then tries to calculate the evs for it, which is very time consuming and not possible on a personal computer.</p><p>This however can be avoided using a smart trick that the `pca_orl.m` code uses. They calculate the eigenvectors only for innerp X'X instead of outerp XX', thus reducing the eigenspace. X'X is only 10k * n_components and the eigenvectors for these can pe computed in the given time and memory constraints.</p><p>The reason for this is very nice, we know that the rank of X is at max 200 thus, all singular values will anyways be zero after the first 200. So we can safely ignore computing the eigenvectors for them.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% EE 779 : PCA Assignment 
+% Meet Pragnesh Shah, 13D070003
+%%
+
+% I did the same assignment in CS663, for a more detailed explanation of 
+% the optimization used and how reconstruction varies with number of components
+% please visit : http://meetshah1995.github.io/CS-663/assig-4/3/report/myMainScript.html
+%
+% I have made some changes in the pca_orl and orl data loader code to 
+% be inline with my directory structure, that will however not make any difference
+% in the performance / reports.
+
+%% PCA with k = 200
+facerecog1_meet
+%
+% MSE in training images database is significantly low when compared to the MSE of 
+% test image and myImg. This is due to the fact that the eigenspace defined by the 
+% training images is specific to itself and any arbitrary image when reconstructed 
+% with the principal components of these space will lead to large MSE in images. 
+%
+% However we notice that since the database contains images of faces, that have very
+% generic spatial features and illumination conditions, some generality is still captured
+% by the eigenspace. Thus any image (i.e test image) with similar spatial features (face in the same 
+% location and same size) can be reconstructed from this PCs with MSE in acceptable bounds. 
+%
+% But when a completely arbitrary image like myImg, whose features are considerably different 
+% from the original database is reconstructed using the PCs, the MSE is very large as can be observed. 
+%
+% We can also see from the plots of eigenfaces that the PCA has generalized well for higher eigenvalues,
+% and the eigenfaces resemble actual faces, the resemblance however reduces for lower eigenvalues 
+% (lesser principal components).
+
+
+%% PCA with k = 100
+facerecog2_meet
+% 
+% Other error charecteristics remain same, but we can observe that the train MSE has increased, but the test and myImg MSE
+% is still almost similar as in case of k =200. This is very intuitive from the fact that, since test and myImg dint belong 
+% to the PC in the first place, the reconstruction was bound to fail. One thing however to note here is that the percentage
+% change in test is more than in myIMG, because test image, though not belonging to the database, had very similar 
+% characteristics to the train database (which were captured by the principal components). Now as we reduced the PCs, 
+% the test reconstruction also deteriorated.
+
+%% My Implementation 
+%
+% The code for the PCA method discussed in the class cannot be implemented given the memory constraints 
+% as it forms a matrix of almost 10k * 10k, and then tries to calculate the evs for it, which is very time
+% consuming and not possible on a personal computer. 
+%
+% This however can be avoided using a smart trick that the `pca_orl.m` code uses.
+% They calculate the eigenvectors only for innerp X'X instead of outerp XX', thus reducing the 
+% eigenspace. X'X is only 10k * n_components and the eigenvectors for these can pe computed
+% in the given time and memory constraints. 
+% 
+% The reason for this is very nice, we know that the rank of X is at max 200 thus, all singular values 
+% will anyways be zero after the first 200. So we can safely ignore computing the eigenvectors for them.
+%
+##### SOURCE END #####
+--></body></html>
